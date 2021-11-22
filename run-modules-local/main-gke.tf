@@ -13,14 +13,14 @@ terraform {
 }
 
 provider "google" {
-  credentials = file(var.gcp_auth_file)
+#  credentials = file(var.gcp_auth_file)
   project = var.gcp_project_id
   region  = var.gcp_region
   zone = var.gcp_zone
 }
 
 provider "google-beta" {
-  credentials = file(var.gcp_auth_file)
+#  credentials = file(var.gcp_auth_file)
   project = var.gcp_project_id
   region  = var.gcp_region
   zone = var.gcp_zone
@@ -32,7 +32,7 @@ locals {
 }
 
 module "vpc_tformers"{
-  source = "./modules/vpc"
+  source = "../modules/vpc"
  
 #PROJECT info
   gcp_region      = var.gcp_region
@@ -62,7 +62,7 @@ module "vpc_tformers"{
 
 
 module "gke_tformers" {
-  source = "./modules/gke"
+  source = "../modules/gke"
 
 #PROJECT info
   billing_account = var.billing_account 			#
