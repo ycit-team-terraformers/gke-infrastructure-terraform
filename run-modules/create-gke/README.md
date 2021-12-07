@@ -14,8 +14,8 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_gke_tformers"></a> [gke\_tformers](#module\_gke\_tformers) | app.terraform.io/Terraformers21/modgke/gcp | 1.0.2 |
-| <a name="module_vpc_tformers"></a> [vpc\_tformers](#module\_vpc\_tformers) | app.terraform.io/Terraformers21/modvpc/gcp | 1.0.2 |
+| <a name="module_gke_tformers"></a> [gke\_tformers](#module\_gke\_tformers) | app.terraform.io/Terraformers21/modgke/gcp | 1.3.0 |
+| <a name="module_vpc_tformers"></a> [vpc\_tformers](#module\_vpc\_tformers) | app.terraform.io/Terraformers21/modvpc/gcp | 1.1.0 |
 
 ## Resources
 

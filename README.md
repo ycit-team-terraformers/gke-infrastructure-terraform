@@ -2,7 +2,7 @@
 
 Contains terraform files used to build GKE infrastructure
 
-Template for VPC and Kubernetes Cluster using local or remote modules
+Template for VPC and Kubernetes Cluster using remote modules published in Terraform Cloud (TFC)
 
 ## Running Terraform outside of Google Cloud
 
@@ -28,23 +28,22 @@ For details configuring storage and backend see the following article
 
 - [How to Configure the GCP Backend for Terraform](https://gmusumeci.medium.com/how-to-configure-the-gcp-backend-for-terraform-7ea24f59760a)
 
-#### Additionally, if using a module from Terraform Cloud Registry
+#### Additionally, to be able to use the module from Terraform Cloud Registry
 
 - [ ] Terraform Cloud token file saved in your working directory.
 - [ ] The name of the file must be: **.terraformrc**
 
 **When running Terraform from the CLI, you must configure credentials in a .terraformrc or terraform.rc file**
 
-
 ## Build the terraform image using the Docker file
 
-1. Generate an image using the Dockerfile located under the dockerFiles repository / terraform
+1. Generate an image using the Dockerfile located under the repository named [environments-images-dockers](https://github.com/ycit-team-terraformers/environments-images-dockers)
 
  See instructions along with the dockerfile to create the image.
 
  _Optionally you can push the generated image to your preferred image registry_
 
- *The following instructions assume the image is in the local registry* change the command to use an image from the published registry
+ *The following instructions and examples have the systax where the image is in the local registry* change the command to use an image from the published registry if required.
 
 ## Service account and authorisation file
 
@@ -91,66 +90,11 @@ docker run --rm -it -v "$(pwd):/terraformfiles" terraformers:v1 apply "-auto-app
 
  _Remove the "auto-approve" flag if you want to manually confirm your choice._
  
-Once the code applied, the bucket will be created according to the parameters defined.
-
-## Build infrastructure using local modules
-
-- This method uses modules with terraform code stored locally
-- use the contents of the modules folder to run the infrastructure
-- Terrform files using remote registry are located under the 'run-modules" folder. _See next section_
-
-**Steps**
-1. Clone repository (if not done yet)
-2. Navigate to the folder 'run-modules-local'
-3. Do a copy of the folder named 'modules' inside the folder 'run-modules-local'
-4. Edit the file **terraform.tfvars** and change the values to the variables to match your environment like,
-   
-   - Project Id
-   - The billing account associated to the project
-   - Bucket name
-   - Path to your authorisation file
-   
-   > If there is no file named terraform.tfvars you can create it using the template 'terraform.tfvars-sample" 
-   
-5. Place the json file having your google service account token in the working directory
-
-    _Note_: location and name must match the value entered in the .tfvars file
-	 
-6. Run the terraform commands init, plan, apply. 
-
-7. Run terraform command destroy if needed. (Run this command when doing testings to avoid unnecessary or accidental **fees** :heavy_dollar_sign: :heavy_dollar_sign:)
-
-### From the 'local-module' folder run the following commands
-
-- Init
-```
-docker run --rm -it -v "$(pwd):/terraformfiles" terraformers:v1 init
-```
-
-- Plan
-
-```
-docker run --rm -it -v "$(pwd):/terraformfiles" terraformers:v1 plan
-```
-
-- Apply
-
-```
-docker run --rm -it -v "$(pwd):/terraformfiles" terraformers:v1 apply "-auto-approve"
-```
-
-- Destroy
-
-```
-docker run --rm -it -v "$(pwd):/terraformfiles" terraformers:v1 apply "-destroy" "-auto-approve"
-```
-
-**_You can also use the alias defined in the .terraformers_functions file under the "dotfiles" repository._**
+Once the code is applied, the bucket will be created according to the parameters defined. Bucket can be used in the following steps or subsequent runs of terraform
 
 ## Build infrastructure using Remote modules
 
-- This method uses Remote modules loaded in Terraform Cloud Registry 
-- Terrform files using local modules are located under the 'run-modules-local" folder. _See previous section_
+- This method uses remote modules published in Terraform Cloud Registry (TFC)
 
 **Note:** When using remote modules from Terraform Cloud (TFC), you will need to save your TFC token in the working folder where terraform files run.
 - Use the terraform login command to generate the token  
@@ -159,8 +103,9 @@ docker run --rm -it -v "$(pwd):/terraformfiles" terraformers:v1 apply "-destroy"
 1. Clone repository (if not done yet)
 2. Navigate to the folder 'run-modules'
 3. Go inside the folder for the insfrastructre you want to build. 
+   
    - in this instructions we will use the 'create-gke' folder
-
+   
    Edit the file **terraform.tfvars** and change the values to the variables to match your environment like,
    
    - Project Id
@@ -168,7 +113,7 @@ docker run --rm -it -v "$(pwd):/terraformfiles" terraformers:v1 apply "-destroy"
    - Bucket name
    - Path to your authorisation file
    
-     > If there is no file named terraform.tfvars you can create it using the template 'terraform.tfvars-sample"    
+     > If there is no file named terraform.tfvars you can create it using the template 'terraform.tfvars-sample" - rename the file to **terraform.tfvars**   
 	 
 4. Make sure you have your json authorisation file in your working directory or location specified in the tfvars files
 
@@ -182,7 +127,7 @@ docker run --rm -it -v "$(pwd):/terraformfiles" terraformers:v1 apply "-destroy"
 
 	- Init
 		```
-		docker rn --rm -it -v "$(pwd):/terraformfiles" terraformers:v1 init
+		docker run --rm -it -v "$(pwd):/terraformfiles" terraformers:v1 init
 		```
 	- Plan
 		```
@@ -217,7 +162,7 @@ docker run -it -v "$(pwd):/terraformfiles" terraformers:v1 login
 
 3. Generate a token using your browser, and copy-paste it into the CLI prompt.
 
- **Hint:**. Before pasting the token string, make sure to click the Window running the CLI (set focus), then perform the paste option or do the mouse right click at the prompt.
+ **Hint:**. Before pasting the token string, make sure to click the Window title running the container with the Terraform CLI (set focus), then perform the paste option or do the mouse right click at the prompt.
    
     hit 'Enter' once the value is copied.
    
@@ -226,11 +171,12 @@ docker run -it -v "$(pwd):/terraformfiles" terraformers:v1 login
    Terraform by default will store the token in plain text in the following file for use by subsequent commands:
     /root/.terraform.d/credentials.tfrc.json
 
-   _Note, the container has the file system structure to save this file in your working directory mounted to the container volume '/terraformfiles'_
+   _Note, the container has the file system structure defined to save this file in your working directory mounted to the container volume '/terraformfiles'_
+   The file should appear in your working directory
 
 4. If the token is accepted, you will see the Welcome login characters in the CLI terminal and new files created in the working folder. 
-7. Locate the file named 'credentials.tfrc.json' and rename it to '.terraformrc'
-8. Place the renamed credential file inside the terraform working folder having the terraform files calling the remote modules, example: 'run-modules'.
+7. Locate the file named 'credentials.tfrc.json' and rename it to '**.terraformrc**'
+8. Place the renamed credential file inside the terraform working folder having the terraform files calling the remote modules, example: 'run-modules/create-gke'.
 
 ## Example Terraform credential file
 
@@ -239,7 +185,7 @@ credentials "app.terraform.io" {
   }
 
 
-## Structure of terraform infrastructure files :
+## Sample Structure of terraform files used to build the gke infrastructure :
 
 <pre> 
 |   +Infra
@@ -250,7 +196,6 @@ credentials "app.terraform.io" {
 |       |       variables.tf
 |       |
 |       +---create-gke
-|       |       .gitignore
 |       |       .terraformrc
 |       |       backend.tf
 |       |       main-gke.tf

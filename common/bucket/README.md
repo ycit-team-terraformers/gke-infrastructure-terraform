@@ -32,7 +32,7 @@ No modules.
 | <a name="input_gcp_project_id"></a> [gcp\_project\_id](#input\_gcp\_project\_id) | The GCP project ID | `string` | n/a | yes |
 | <a name="input_gcp_region"></a> [gcp\_region](#input\_gcp\_region) | The GCP Region where elements will be created | `string` | `"us-central1"` | no |
 | <a name="input_gcp_zone"></a> [gcp\_zone](#input\_gcp\_zone) | The GCP Zone where elements will be created | `string` | `"us-central1-c"` | no |
-| <a name="input_storage-class"></a> [storage-class](#input\_storage-class) | The storage class of the Storage Bucket to create | `string` | n/a | yes |
+| <a name="input_storage_class"></a> [storage\_class](#input\_storage\_class) | The storage class of the Storage Bucket to create | `string` | n/a | yes |
 | <a name="input_versioning_enabled"></a> [versioning\_enabled](#input\_versioning\_enabled) | Value to enable or not the versioning | `bool` | `true` | no |
 
 ## Outputs

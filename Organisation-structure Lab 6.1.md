@@ -23,8 +23,7 @@ Each environment will have a folder with the files proper to the environment, th
 >>>>
 >>>run-modules : folder per each Instracture as a Code run
 >>>>create-gke
->>>>
->>>>create-vpc
+
 
 # Infrastructure organisation
 
@@ -60,19 +59,16 @@ Each environment will have a folder with the files proper to the environment, th
 # Structure example
 
  <pre>
- 
 +---Infra
 |   |   Organisation-structure.md
 |   |   README.md
 |   |
 |   +---common
 |   |   \---bucket
-|   |           .gitignore
 |   |           bucket.tf
 |   |           outputs.tf
 |   |           README.md
-|   |           terraform-svc.json
-|   |           terraform.tfvars
+|   |           terraform.tfvars-sample
 |   |           variables.tf
 |   |
 |   +---environments
@@ -85,60 +81,21 @@ Each environment will have a folder with the files proper to the environment, th
 |   |   \---stg
 |   |           terraform.tfvars
 |   |
-|   +---modules
-|   |   +---envtype
-|   |   |       main.tf
-|   |   |       outputs.tf
-|   |   |       README.md
-|   |   |       variables.tf
-|   |   |
-|   |   +---gke
-|   |   |       main.tf
-|   |   |       outputs.tf
-|   |   |       README.md
-|   |   |       variables.tf
-|   |   |
-|   |   \---vpc
-|   |           main.tf
-|   |           outputs.tf
-|   |           README.md
-|   |           variables.tf
-|   |
 |   +---run-modules
 |   |   +---create-bucket
 |   |   |       main.tf
 |   |   |       README.md
-|   |   |       terraform.tfvars
 |   |   |       terraform.tfvars-sample
 |   |   |       variables.tf
 |   |   |
 |   |   +---create-gke
-|   |   |       .gitignore
-|   |   |       .terraformrc
 |   |   |       backend.tf
 |   |   |       main-gke.tf
 |   |   |       README.md
 |   |   |       terraform-init-for-backend.txt
-|   |   |       terraform-svc.json
-|   |   |       terraform.tfvars
 |   |   |       terraform.tfvars-sample
 |   |   |       variables.tf
-|   |   |
-|   |   \---create-vpc
-|   \---run-modules-local
-|       |   .gitignore
-|       |   backend.tf
-|       |   main-gke.tf
-|       |   README.md
-|       |   terraform-svc.json
-|       |   terraform.tfvars
-|       |   terraform.tfvars-sample
-|       |   variables.tf
-|       |
-|       \---modules
-|           +--- (Copied from main modules folder) 
-|                   
+|   |   |                 
 |
-
 </pre> 
     
