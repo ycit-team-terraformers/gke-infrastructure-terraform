@@ -33,7 +33,7 @@ Edit the terraform.tfvars if needed.
 
 ## Backend - the GCS bucket
 
-3. Edit the file backend.tf to add/modify the name of the GCS bucket
+3. Edit the file backend.tf to add/modify the name of the GCS bucket if you used a different name for the bucket
 
 ## Run terraform commands
  
@@ -42,6 +42,8 @@ Go to the terraform working folder, example
   → /run-modules/create-gke
 
 0. Move the terraform.tfvars from the environment folder dev to the working directory and edit the values if needed.  
+
+if using the file terraform.tfvars-sample, rename it to **terraform.tfvars**
 
 Launch the following commands
 
@@ -87,7 +89,7 @@ docker run --rm -it -v "$(pwd):/terraformfiles" terraformers:v1 plan
 docker run --rm -it -v "$(pwd):/terraformfiles" terraformers:v1 apply "-auto-approve"
 ```
 
-6. A) Verify in GCP infrastructure has been created.
+6. A) Verify in GCP, the infrastructure has been created.
 
 #### Now on workspace prod
 
@@ -123,7 +125,7 @@ docker run --rm -it -v "$(pwd):/terraformfiles" terraformers:v1 plan
 docker run --rm -it -v "$(pwd):/terraformfiles" terraformers:v1 apply "-auto-approve"
 ```
 
- _Note_: Objects created will have a suffix in the name with the value of the environment variable in .tfvars file
+ _Note_: Objects created will have a suffix in the name with the value of the variable named 'environment' in .tfvars file
 
 14. Review GCS bucket
 

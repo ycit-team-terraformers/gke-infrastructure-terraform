@@ -9,8 +9,8 @@ terraform {
 
 terraform {
   backend "gcs" {
-    bucket      = "tf-bucket-ycit021-dpreno"
-    prefix      = "terraform/remote-module-state"
-    credentials = "gcp_auth.json"
+    bucket = "tf-bucket-ycit021"
+    prefix = "terraform/remote-module-state"
+    #credentials = "terraform-svc.json"
   }
 }
