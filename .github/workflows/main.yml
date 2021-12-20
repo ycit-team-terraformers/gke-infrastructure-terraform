@@ -85,35 +85,14 @@ jobs:
           entrypoint: terraform
           args: -chdir=./run-modules/create-gke/ fmt
           
-      #
-      # Linting part not working yet using hashicorp/setup-terraform@v1 throws error saying some invalid files and try fmt. 
-      # fmt is done and nothing shows bad, all file well formated
-      #
-      
-      # # Linting of TF code
-      #- name: Setup Terraform
-      #  uses: hashicorp/setup-terraform@v1
-      #  with:
-      #    cli_config_credentials_token: ${{ secrets.TFE_TOKEN }}
-      #- name: Terraform Format
-      #  id: fmt
-      #  run: terraform fmt
-      #- name: Lint Terraform
-      #  uses: actionshub/terraform-lint@main
-      #  with:
-      #   args: --loglevel=info --module --disable-rule=terraform_deprecated_interpolation ./
-      #   # args: --loglevel=info --module --disable-rule=terraform_deprecated_interpolation ./run-modules/create-gke/
-
-      #
-      # Linting part not working yet / using terraform-linters/tflint-bundle@v0.33.1 throws error unable to download the TF module
-      # Error accessing remote module registry  reason, need to specify the TFE_TOKEN or .terraformrc
-      #
-       #Runs a container from ghcr.io, version v0.33.1
-      #- name: Check linting of GKE MODULE Terraform files
-      #  uses: terraform-linters/tflint-bundle@v0.33.1
-      #  # here are some options: loglevel to provide visibility, module support enabled, disable 1 TFLint default rule that was giving us trouble, and manually specify the location in the repo for TF files
-      #  with:
-      #   args: --loglevel=info --module --disable-rule=terraform_deprecated_interpolation ./run-modules/create-gke/
+        # Linting of TF code
+     
+        # Runs a container from ghcr.io, version v0.33.1
+      - name: Check linting of Terraform files for GKE
+        uses: terraform-linters/tflint-bundle@v0.33.1
+        # here are some options: loglevel to provide visibility, disable 1 TFLint default rule that was giving us Warning, and manually specify the location in the repo for TF files
+        with:
+          args: --ignore-module=SOURCE --loglevel=info --disable-rule=terraform_deprecated_interpolation ./run-modules/create-gke/
       
   terraform_plan:
   #if prebuildcheck passes, do TF plan
