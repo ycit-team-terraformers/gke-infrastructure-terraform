@@ -10,6 +10,13 @@ There are two scenarios
 ### 1. Using local modules
 ### 2. Using module from Terrform Registry Cloud
 
+The second option is the one presented in the Instructions below.
+
+### Input/Output variable information
+
+See the variable documentation available in the run-modules folder. Follow this link
+[Terraform code input/output variables](./run-modules/create-gke/README.md)
+
 ## Prerequisites
 
 - [ ] Google Cloud Platform (GCP).
