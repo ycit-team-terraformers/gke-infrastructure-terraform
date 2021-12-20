@@ -46,4 +46,12 @@ No resources.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | The cluster endpoint IPv4 reference. |
+| <a name="output_id"></a> [id](#output\_id) | The ID of the cluster created. |
+| <a name="output_master_version"></a> [master\_version](#output\_master\_version) | The master version of the cluster created. |
+| <a name="output_subnet_id"></a> [subnet\_id](#output\_subnet\_id) | The ID of the subnet object created. |
+| <a name="output_subnet_selflink"></a> [subnet\_selflink](#output\_subnet\_selflink) | The selflink that references the subnet object created. |
+| <a name="output_vpc_name"></a> [vpc\_name](#output\_vpc\_name) | The name of the created VPC. |
+| <a name="output_vpc_selflink"></a> [vpc\_selflink](#output\_vpc\_selflink) | The selflink that references the VPC object created. |
