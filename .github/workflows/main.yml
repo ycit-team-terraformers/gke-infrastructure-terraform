@@ -1,4 +1,4 @@
-name: Check-plan-apply
+name: Check-Lint-plan-apply
 
 # Controls when the workflow will run
 on:
@@ -17,6 +17,11 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      runapply:
+        description: 'Enter yes or no if apply should be run'
+        required: true
+        default: 'No'        
 
 jobs:
   prebuildcheck:
@@ -34,7 +39,7 @@ jobs:
         uses: actions/checkout@v2
 
       #
-      # Sequence:  Setup Ations -> Terraform init -> Terraform validate Terraform format -> Terraform lint
+      # Sequence:  Setup Ations -> Terraform init -> Terraform validate, Terraform format -> Terraform lint ->Plan/deploy
       #
       
       # Terraform init
@@ -84,8 +89,8 @@ jobs:
         with:
           entrypoint: terraform
           args: -chdir=./run-modules/create-gke/ fmt
-          
-        # Linting of TF code
+      
+      # Linting of TF code
      
         # Runs a container from ghcr.io, version v0.33.1
       - name: Check linting of Terraform files for GKE
@@ -93,7 +98,20 @@ jobs:
         # here are some options: loglevel to provide visibility, disable 1 TFLint default rule that was giving us Warning, and manually specify the location in the repo for TF files
         with:
           args: --ignore-module=SOURCE --loglevel=info --disable-rule=terraform_deprecated_interpolation ./run-modules/create-gke/
-      
+     
+      # Linting of TF code
+      #- name: Setup Terraform
+      #  uses: hashicorp/setup-terraform@v1
+      #  with:
+      #    cli_config_credentials_token: ${{ secrets.TFE_TOKEN }}
+      #- name: Terraform Format
+      #  id: fmt
+      #  run: terraform fmt
+      #- name: Lint Terraform
+      #  uses: actionshub/terraform-lint@main
+      #  with:
+      #    args: --loglevel=info --module --disable-rule=terraform_deprecated_interpolation ./run-modules/create-gke/
+
   terraform_plan:
   #if prebuildcheck passes, do TF plan
    runs-on: ubuntu-latest
@@ -128,6 +146,7 @@ jobs:
           args: -chdir=./run-modules/create-gke/ init
 
       - name: Run a Terraform plan on /modules/gke
+        id: plan
         uses: docker://ghcr.io/ycit-team-terraformers/terraformers:v1
         env:
            TF_CLI_CONFIG_FILE: ./run-modules/create-gke/.terraformrc
@@ -135,23 +154,26 @@ jobs:
         with:
           entrypoint: terraform
           args: -chdir=./run-modules/create-gke/ plan
-  
-  terraform_apply_dev:
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+  terraform_apply:
   #if terraform_plan passes, do TF apply
    needs: terraform_plan
    name: deploygke 
    runs-on: ubuntu-latest
-   #environment:
-   #   name: staging
-   #   url: ${{ steps.deploy_staging.outputs.webapp-url }}
       
    #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-   if: github.event_name != 'pull_request' && github.event_name == 'push' && (contains(toJson(github.event.commits), '*DEV*') == true || contains(toJson(github.event.commits), '[skip prod]') == true)
+   #if: github.event_name != 'pull_request' && github.event_name == 'push' && (contains(toJson(github.event.commits), '*DEV*') == true || contains(toJson(github.event.commits), '[skip prod]') == true)
+   if: (${{ github.event.inputs.runapply =='yes' }})  || (github.event.review.state == 'approved' && contains(github.event.pull_request.labels.*.name, 'prod'))
+
    steps:
       # Checks-out repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
         uses: actions/checkout@v2
-      
+        
       # prepares Terraform token, to be able to donnect to TFC and download the Terraform modules specified in main-gke.tf source tag
       - name: Setup TF_token
         env:
@@ -184,4 +206,4 @@ jobs:
         with:
           entrypoint: terraform
           args: -chdir=./run-modules/create-gke/ apply -auto-approve
- 
+          
