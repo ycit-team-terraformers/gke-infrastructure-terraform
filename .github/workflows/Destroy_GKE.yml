@@ -1,0 +1,63 @@
+# Destroy TF insfrastructure, if yes is selected when running the flow manually
+
+name: TF_Destroy
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      rundestroy:
+        description: 'Enter yes or no (lowercase) if destroy should happen'
+        required: true
+        default: 'No'
+    
+        
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:                    
+  terraform_destroy:
+  #if destroy option is passed in input parameter
+   name: destroygke 
+   runs-on: ubuntu-latest
+   #environment:
+   #   name: staging
+   #   url: ${{ steps.deploy_staging.outputs.webapp-url }}
+      
+   if: ${{ github.event.inputs.rundestroy  =='yes' }}
+   steps:
+      # Checks-out repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        #if: ${{ github.event.inputs.runapplyordestroy }} =='destroy'
+        uses: actions/checkout@v2
+      
+      # prepares Terraform token, to be able to donnect to TFC and download the Terraform modules specified in main-gke.tf source tag
+      - name: Setup TF_token
+        env:
+          TFE_TOKEN: ${{ secrets.TFE_TOKEN }}
+        run: |
+          cat << EOF > ./run-modules/create-gke/.terraformrc
+          {
+             "credentials": {
+               "app.terraform.io": {
+                 "token": "$TFE_TOKEN"
+                }
+              }
+          }
+          EOF
+          
+      - name: Run Terraform init on /modules/gke
+        uses: docker://ghcr.io/ycit-team-terraformers/terraformers:v1
+        env:
+           TF_CLI_CONFIG_FILE: ./run-modules/create-gke/.terraformrc
+           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        with:
+          entrypoint: terraform
+          args: -chdir=./run-modules/create-gke/ init
+
+      - name: Run a Terraform apply on /modules/gke
+        uses: docker://ghcr.io/ycit-team-terraformers/terraformers:v1
+        env:
+           TF_CLI_CONFIG_FILE: ./run-modules/create-gke/.terraformrc
+           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        with:
+          entrypoint: terraform
+          args: -chdir=./run-modules/create-gke/ destroy -auto-approve
+          
